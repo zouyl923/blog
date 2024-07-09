@@ -1,0 +1,47 @@
+syntax = "v1"
+
+info (
+	title: "权限模块"
+)
+
+type (
+	SystemPermission {
+		Id        int64   `json:"id"`
+		MenuId    int32   `json:"menu_id"`
+		Uri       string  `json:"uri"`
+		Menu      []int32 `json:"menu"`
+		CreatedAt string  `json:"created_at"`
+	}
+	SystemPermissionUpdateReq {
+		Id     int64  `json:"id"`
+		MenuId int32  `json:"menu_id" validate:"required" label:"请选择关联菜单"`
+		Uri    string `json:"uri" validate:"required" label:"请填写接口权限"`
+	}
+	SystemPermissionDeleteReq {
+		Id  int64   `json:"id"` //单删
+		Ids []int64 `json:"ids"` //批量删除
+	}
+	SystemPermissionInfoReq {
+		Id int `form:"id"`
+	}
+)
+
+@server (
+	group:      v1/system/permission
+	prefix:     /v1/system/permission
+	middleware: CorsMiddleware,AuthMiddleware,PermissionMiddleware
+)
+service admin-api {
+	@handler treeHandler
+	get /tree_list returns ([]Menu)
+
+	@handler infoHandler
+	get /info (SystemPermissionInfoReq) returns (SystemPermission)
+
+	@handler updateHandler
+	post /update (SystemPermissionUpdateReq)
+
+	@handler deleteHandler
+	post /delete (SystemPermissionDeleteReq)
+}
+

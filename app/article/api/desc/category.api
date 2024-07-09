@@ -1,0 +1,18 @@
+syntax = "v1"
+type (
+    Category {
+        Id       int64  `json:"id"`
+        ParentId int32  `json:"parent_id"`
+        Name     string `json:"name"`
+    }
+)
+
+@server (
+    group:      v1/category
+    middleware: CorsMiddleware
+)
+service article-api {
+    @doc "分类列表"
+    @handler allListHandler
+    get /v1/category/all_list returns ([]Category)
+}

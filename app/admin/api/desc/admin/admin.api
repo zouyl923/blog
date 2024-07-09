@@ -1,0 +1,59 @@
+syntax = "v1"
+
+type (
+	AdminInfo {
+		Id       int64      `json:"id"`
+		Name     string     `json:"name"`
+		Phone    string     `json:"phone"`
+		RoleId   int        `json:"role_id"`
+		RoleInfo SystemRole `json:"role_info"`
+	}
+	AdminSearchReq {
+		Page     int    `form:"page"`
+		PageSize int    `form:"page_size"`
+		Keyword  string `form:"keyword"`
+	}
+	AdminPageList {
+		Total    int64       `json:"total"`
+		Data     []AdminInfo `json:"data"`
+		Page     int         `json:"page"`
+		PageSize int         `json:"page_size"`
+	}
+	AdminUpdateReq {
+		Id       int64  `json:"id"`
+		Name     string `json:"name"  validate:"required" label:"账号"`
+		Password string `json:"password" validate:"required" label:"密码"`
+		Phone    string `json:"phone" validate:"required" label:"手机号"`
+		RoleId   int32  `json:"role_id" validate:"required" label:"角色"`
+	}
+	AdminDeleteReq {
+		Id  int64   `json:"id"` //单删
+		Ids []int64 `json:"ids"` //批量删除
+	}
+	AdminInfoReq {
+		Id int `form:"id"`
+	}
+)
+
+@server (
+	group:      v1/admin
+	prefix:     /v1/admin
+	middleware: CorsMiddleware,AuthMiddleware,PermissionMiddleware
+)
+service admin-api {
+	@handler pageListHandler
+	get /page_list (AdminSearchReq) returns (AdminPageList)
+
+	@handler allListHandler
+	get /all_list (AdminSearchReq) returns ([]AdminInfo)
+
+	@handler infoHandler
+	get /info (AdminInfoReq) returns (AdminInfo)
+
+	@handler updateHandler
+	post /update (AdminUpdateReq)
+
+	@handler deleteHandler
+	post /delete (AdminDeleteReq)
+}
+

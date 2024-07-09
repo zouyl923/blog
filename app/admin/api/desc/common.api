@@ -1,0 +1,9 @@
+syntax = "v1"
+
+type (
+	//定义空请求
+	EmptyReq  {}
+	//定义空返回
+	EmptyRes  {}
+)
+

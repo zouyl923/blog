@@ -1,0 +1,59 @@
+syntax = "v1"
+
+info (
+	title: "角色模块"
+)
+
+type (
+	SystemRole {
+		Id         int     `json:"id"`
+		Name       string  `json:"name"`
+		Permission []int32 `json:"permission"`
+	}
+	SystemRoleSearchReq {
+		Page     int    `form:"page"`
+		PageSize int    `form:"page_size"`
+		Keyword  string `form:"keyword"`
+	}
+	SystemRolePageList {
+		Total    int64        `json:"total"`
+		Data     []SystemRole `json:"data"`
+		Page     int          `json:"page"`
+		PageSize int          `json:"page_size"`
+	}
+	SystemRoleUpdateReq {
+		Id         int64   `json:"id"`
+		Name       string  `json:"name" validate:"required" label:"角色名称"`
+		Permission []int32 `json:"permission" validate:"required" label:"拥有权限"`
+	}
+	SystemRoleDeleteReq {
+		Id  int64   `json:"id"` //单删
+		Ids []int64 `json:"ids"` //批量删除
+	}
+	SystemRoleInfoReq {
+		Id int `form:"id"`
+	}
+)
+
+@server (
+	group:      v1/system/role
+	prefix:     /v1/system/role
+	middleware: CorsMiddleware,AuthMiddleware,PermissionMiddleware
+)
+service admin-api {
+	@handler listHandler
+	get /page_list (SystemRoleSearchReq) returns (SystemRolePageList)
+
+	@handler allListHandler
+	get /all_list returns ([]SystemRole)
+
+	@handler infoHandler
+	get /info (SystemRoleInfoReq) returns (SystemRole)
+
+	@handler updateHandler
+	post /update (SystemRoleUpdateReq)
+
+	@handler deleteHandler
+	post /delete (SystemRoleDeleteReq)
+}
+

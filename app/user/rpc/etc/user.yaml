@@ -1,0 +1,39 @@
+Name: user.rpc
+ListenOn: 0.0.0.0:6071
+
+Etcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: user.rpc
+
+Log:
+  ServiceName: user-rpc
+  # console , file ,
+  Mode: console
+  Level: info
+  Path: logs
+  # 输出格式
+  Encoding: plain
+
+MySql:
+  Host: "127.0.0.1"
+  Port: 3306
+  User: "root"
+  Password: "123456"
+  Database: "base_api"
+  Prefix: ""
+  Charset: "utf8mb4"
+
+Redis:
+  Key: "user"
+  Host: "127.0.0.1:6379"
+  Type: "node"
+  Password: "123456"
+  Tls: false
+
+
+VerifyRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: verify.rpc

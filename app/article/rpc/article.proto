@@ -1,0 +1,111 @@
+syntax = "proto3";
+
+package article;
+option go_package = "./rpc";
+
+message Article {
+  string uuid = 1;
+  string title = 2;
+  string cover = 3;
+  int32 like_num = 4;
+  int32 comment_num = 5;
+  int32 view_num = 6;
+  int32 category_id = 7;
+  int64  user_id = 8;
+  User user_info = 9;
+  Category category_info = 10;
+  Detail detail_info = 11;
+  string created_at = 12;
+}
+message User{
+  int64 id = 1;
+  string nickname = 2;
+  string avatar = 3;
+}
+message Category{
+  int64 id = 1;
+  int32 parent_id = 2;
+  string name = 3;
+}
+message Detail {
+  string article_uuid = 1;
+  string content = 2;
+}
+
+message SearchReq{
+  int32 page = 1 ;
+  int32 category_id = 2;
+  int64 user_id = 3;
+  string keyword = 4;
+}
+
+message PageData{
+  int32 page = 1 ;
+  int32 page_size = 2;
+  int64 total = 3;
+  repeated Article data = 4;
+}
+
+message InfoReq{
+  string uuid = 1;
+  int64 user_id = 2;
+}
+
+message CategoryRes{
+  repeated Category list = 1;
+}
+
+message UpdateReq{
+  string uuid = 1;
+  string title = 2;
+  string cover = 3;
+  int32 category_id = 4;
+  string content = 5;
+  int64 user_id = 6;
+}
+
+message DeleteReq{
+  string uuid = 1;
+  int64 user_id = 2;
+}
+
+message UploadReq{
+  string file = 1;
+  bytes content = 2;
+}
+message UploadRes{
+  string file = 1;
+}
+
+message ExamineReq{
+  int32 state = 1;
+  string reason = 2;
+}
+message EmptyReq{
+
+}
+message EmptyRes{
+
+}
+
+service CommonService {
+  //公共文章
+  rpc PageList(SearchReq) returns(PageData);
+  rpc CategoryList (EmptyReq)returns(CategoryRes);
+  rpc Info (InfoReq)returns(Article);
+}
+
+service UserService{
+  //个人文章
+  rpc PageList(SearchReq) returns(PageData);
+  rpc Info (InfoReq)returns(Article);
+  rpc Push(UpdateReq) returns(EmptyRes);
+  rpc Upload(UploadReq) returns(UploadRes);
+  rpc Delete(DeleteReq) returns(EmptyRes);
+}
+service AdminService{
+  //管理后台
+  rpc PageList(SearchReq) returns(PageData);
+  rpc Delete(DeleteReq) returns(EmptyRes);
+  rpc Examine(DeleteReq) returns(EmptyRes);
+}

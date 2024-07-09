@@ -1,0 +1,34 @@
+Name: article-api
+Host: 0.0.0.0
+Port: 6020
+Mod: dev
+
+Log:
+  ServiceName: article-api
+  # console , file ,
+  Mode: console
+  Level: info
+  Path: logs
+  # 输出格式
+  Encoding: plain
+
+ArticleRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: article.rpc
+
+VerifyRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: verify.rpc
+
+TencentCloud:
+  SecretId:
+  SecretKey:
+  Cos:
+    AppId:
+    Bucket:
+    REGION:
+    Domain:

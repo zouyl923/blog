@@ -1,0 +1,4 @@
+syntax = "v1"
+
+import "./desc/category.api"
+import "./desc/article.api"

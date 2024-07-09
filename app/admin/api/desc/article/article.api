@@ -1,0 +1,67 @@
+syntax = "v1"
+
+type (
+	Article {
+		Uuid         string          `json:"uuid"`
+		CategoryId   int32           `json:"categroy_id"`
+		Title        string          `json:"title"`
+		Cover        string          `json:"cover"`
+		UserUuid     string          `json:"user_uuid"`
+		LikeNum      int64           `json:"like_num"`
+		ViewNum      int64           `json:"view_num"`
+		Status       int32           `json:"status"`
+		CreatedAt    string          `json:"created_at"`
+		DetailInfo   ArticleDetail   `json:"detail_info"`
+		CategoryInfo ArticleCategory `json:"category_info"`
+	}
+	ArticleSearchReq {
+		Page     int    `form:"page"`
+		PageSize int    `form:"page_size"`
+		Keyword  string `form:"keyword"`
+	}
+	ArticlePageList {
+		Total    int64     `json:"total"`
+		Data     []Article `json:"data"`
+		Page     int       `json:"page"`
+		PageSize int       `json:"page_size"`
+	}
+	ArticleDetail {
+		ArticleUuid string `json:"article_uuid"`
+		Content     string `json:"content"`
+		Reason      string `json:"reason"`
+	}
+	ArticleInfoReq {
+		Uuid string `form:"uuid"`
+	}
+	ArticleUpdateReq {
+		Uuid       string `json:"uuid"`
+		CategoryId int32  `json:"categroy_id" validate:"required" label:"分类ID"`
+		Title      string `json:"title" validate:"required" label:"文章标题"`
+		Cover      string `json:"cover" validate:"required" label:"文章封面"`
+		Content    string `json:"content" validate:"required" label:"文章内容"`
+	}
+	ArticleDeleteReq {
+		Uuid  string   `json:"uuid"` //单删
+		Uuids []string `json:"uuids"` //批量删除
+	}
+)
+
+@server (
+	group:      v1/article/article
+	prefix:     /v1/article/article
+	middleware: CorsMiddleware,AuthMiddleware,PermissionMiddleware
+)
+service admin-api {
+	@handler pageHandler
+	get /page_list (ArticleSearchReq) returns (ArticlePageList)
+
+	@handler infoHandler
+	get /info (ArticleInfoReq) returns (Article)
+
+	@handler updateHandler
+	post /update (ArticleUpdateReq)
+
+	@handler deleteHandler
+	post /delete (ArticleDeleteReq)
+}
+

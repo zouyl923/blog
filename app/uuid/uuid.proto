@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package uuid;
+option go_package = "./rpc";
+
+message GenUuidReq{
+  //业务模块
+  string biz_type = 1;
+}
+
+message GenUuidRes{
+  //服务模块
+  string biz_type = 1;
+  //唯一标识
+  string biz_id = 2;
+}
+
+
+service UuidService {
+  rpc GenUuid(GenUuidReq) returns(GenUuidRes);
+}

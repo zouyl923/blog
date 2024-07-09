@@ -1,0 +1,25 @@
+syntax = "v1"
+
+info (
+	title:   "blog"
+	desc:    "blog"
+	author:  "zouyl"
+	email:   "zouyl.job@gmail.com"
+	version: "v1.0.0"
+)
+
+import (
+	//文章模块
+	"desc/article/article.api"
+	"desc/article/category.api"
+	// 全局共用结构体
+	"desc/common.api"
+	//管理员模块
+	"desc/admin/admin.api"
+	"desc/admin/login.api"
+	// 系统管理模块
+	"desc/system/menu.api"
+	"desc/system/role.api"
+	"desc/system/permission.api"
+)
+

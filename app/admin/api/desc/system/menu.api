@@ -1,0 +1,53 @@
+syntax = "v1"
+
+info (
+	title: "菜单模块"
+)
+
+type (
+	Menu {
+		Id         int64            `json:"id"`
+		ParentId   int64            `json:"parent_id"`
+		Name       string           `json:"name"`
+		Uri        string           `json:"uri"`
+		Icon       string           `json:"icon"`
+		Weight     int32            `json:"weight"`
+		Children   []Menu           `json:"children"`
+		Permission SystemPermission `json:"permission"`
+	}
+	MenuUpdateReq {
+		Id       int64  `json:"id"`
+		ParentId int32  `json:"parent_id"`
+		Name     string `json:"name" validate:"required" label:"菜单名称"`
+		Uri      string `json:"uri"`
+		Icon     string `json:"icon"`
+		Weight   int32  `json:"weight"`
+	}
+	MenuDeleteReq {
+		Id  int64   `json:"id" validate:"number,gte=1" label:"菜单id"` //单删
+		Ids []int64 `json:"ids" validate:"array" label:"菜单id"` //批量删除
+	}
+	MenuInfoReq {
+		Id int `form:"id" validate:"number,gte=1" label:"菜单id"`
+	}
+)
+
+@server (
+	group:      v1/system/menu
+	prefix:     /v1/system/menu
+	middleware: CorsMiddleware,AuthMiddleware,PermissionMiddleware
+)
+service admin-api {
+	@handler treeHandler
+	get /tree_list returns ([]Menu)
+
+	@handler infoHandler
+	get /info (MenuInfoReq) returns (Menu)
+
+	@handler updateHandler
+	post /update (MenuUpdateReq)
+
+	@handler deleteHandler
+	post /delete (MenuDeleteReq)
+}
+

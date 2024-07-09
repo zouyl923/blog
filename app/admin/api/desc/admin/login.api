@@ -1,0 +1,64 @@
+syntax = "v1"
+
+type (
+	EnvRes {
+		Env        string `json:"env"`
+		Uid        string `json:"uid"`
+		TimeZone   string `json:"timezone"`
+		Timestamps int    `json:"timestamps"`
+		Agent      string `json:"agent"`
+		Ip         string `json:"ip"`
+	}
+	LoginReq {
+		Username string `json:"username" validate:"required" label:"账号"`
+		Password string `json:"password" validate:"required" label:"密码"`
+	}
+	LoginRes {
+		Token        string `json:"token"`
+		RefreshToken string `json:"refresh_token"`
+	}
+	LoginCheckRes {
+		Token        string `json:"token"`
+		RefreshToken string `json:"refresh_token"`
+	}
+)
+
+@server (
+	//账号登录
+	group:      v1/login
+	prefix:     /v1/login
+	middleware: CorsMiddleware
+)
+service admin-api {
+	@doc "获取环境信息"
+	@handler envHandler
+	get /env returns (EnvRes)
+
+	@doc "登录"
+	@handler loginHandler
+	post /login (LoginReq) returns (LoginRes)
+
+	@doc "刷新token"
+	@handler refreshHandler
+	post /refresh_token returns (LoginRes)
+}
+
+@server (
+	group:      v1/login
+	prefix:     /v1/login
+	middleware: CorsMiddleware,AuthMiddleware
+)
+service admin-api {
+	@doc "退出登录"
+	@handler loginOutHandler
+	post /login_out
+
+	@doc "管理员信息"
+	@handler infoHandler
+	get /info returns (AdminInfo)
+
+	@doc "验证是否登录成功，并刷新token"
+	@handler checkHandler
+	post /check returns (LoginCheckRes)
+}
+

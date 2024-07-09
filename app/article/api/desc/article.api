@@ -1,0 +1,112 @@
+syntax = "v1"
+
+import "./category.api"
+type (
+    Article {
+        Uuid string `json:"uuid"`
+        Title string `json:"title" `
+        Cover string `json:"cover" `
+        LikeNum string `json:"like_num"`
+        CommentNum string `json:"comment_num"`
+        ViewNum string `json:"view_num"`
+        CategoryId int32 `json:"category_id"`
+        UserId int64 `json:"user_id"`
+        CategoryInfo Category `json:"category_info"`
+        DetailInfo Detail `json:"detail_info"`
+        UserInfo User `json:"user_info"`
+        CreatedAt string `json:"created_at"`
+    }
+    User {
+        Id int64 `json:"id"`
+        Nickname string `json:"nickname"`
+        Avatar string `json:"avatar"`
+    }
+
+    Detail {
+        content string `json:"content"`
+    }
+
+    SearchReq {
+        Page int32 `json:"page"`
+        PageSize int32 `json:"page_size"`
+        CategoryId int32 `json:"category_id"`
+        Keyword string `json:"keyword"`
+        State int32 `json:"state"`
+    }
+
+    PageList {
+        Total int64 `json:"total"`
+        Data []Article `json:"data"`
+        Page int `json:"page"`
+        PageSize int `json:"page_size"`
+    }
+
+    InfoReq {
+        Uuid string `form:"uuid"`
+    }
+
+    UpdateReq {
+        Uuid string `json:"uuid"`
+        Title string `json:"title" validate:"required" label:"标题"`
+        Cover string `json:"cover" validate:"required" label:"封面"`
+        CategoryId int32 `json:"category_id" validate:"required" label:"分类"`
+        Content string `json:"content" validate:"required" label:"内容"`
+    }
+
+    DeleteReq {
+        Uuid string `form:"uuid"`
+    }
+
+    UploadReq {
+        File string `form:"file"`
+    }
+
+    UploadRes {
+        File string `json:"file"`
+    }
+
+    ExamineReq {
+        Uuid string `form:"uuid"`
+        State int32 `form:"state"`
+        Reason string `form:"reason"`
+    }
+)
+
+@server(
+    //web公共模块
+    group:      v1/common
+    middleware: CorsMiddleware
+)
+service article-api {
+    @doc "分页列表"
+    @handler pageListHandler
+    get /v1/common/page_list (SearchReq) returns (PageList)
+
+    @doc "文章详情"
+    @handler infoHandler
+    get /v1/common/info (InfoReq) returns (Article)
+}
+
+@server(
+    //个人中心文章模块
+    group:      v1/user
+    middleware: CorsMiddleware,UserAuthMiddleware
+)
+
+service article-api {
+    @doc "上传文件"
+    @handler uploadHandler
+    post /v1/user/upload (UploadReq) returns (UploadRes)
+
+    @doc "发布文章"
+    @handler pushHandler
+    post /v1/user/push (UpdateReq) returns ()
+
+    @doc "我发布的"
+    @handler pageListHandler
+    get /v1/user/page_list (SearchReq) returns (PageList)
+
+    @doc "删除"
+    @handler deleteHandler
+    post /v1/user/delete (DeleteReq) returns ()
+}

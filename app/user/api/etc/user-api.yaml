@@ -1,0 +1,25 @@
+Name: user-api
+Host: 0.0.0.0
+Port: 6070
+Mode: dev
+
+Log:
+  ServiceName: user-rpc
+  # console , file ,
+  Mode: console
+  Level: info
+  Path: logs
+  # 输出格式
+  Encoding: plain
+
+UserRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: user.rpc
+
+VerifyRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: verify.rpc

@@ -1,0 +1,44 @@
+syntax = "v1"
+
+type (
+	ArticleCategory {
+		Id       int64             `json:"id"`
+		ParentId int32             `json:"parent_id"`
+		Name     string            `json:"name"`
+		Weight   int32             `json:"weight"`
+		Children []ArticleCategory `json:"children"`
+	}
+	ArticleCategoryInfoReq {
+		Id int64 `form:"id"`
+	}
+	ArticleCategoryUpdateReq {
+		Id       int64  `json:"id"`
+		ParentId int32  `json:"parent_id"`
+		Name     string `json:"name" validate:"required" label:"分类名称"`
+		Weight   int32  `json:"weight"`
+	}
+	ArticleCategoryDeleteReq {
+		Id  int64   `json:"id"` //单删
+		Ids []int64 `json:"ids"` //批量删除
+	}
+)
+
+@server (
+	group:      v1/article/category
+	prefix:     /v1/article/category
+	middleware: CorsMiddleware,AuthMiddleware,PermissionMiddleware
+)
+service admin-api {
+	@handler treeHandler
+	get /tree_list returns ([]ArticleCategory)
+
+	@handler infoHandler
+	get /info (ArticleCategoryInfoReq) returns (ArticleCategory)
+
+	@handler updateHandler
+	post /update (ArticleCategoryUpdateReq)
+
+	@handler deleteHandler
+	post /delete (ArticleCategoryDeleteReq)
+}
+
