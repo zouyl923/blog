@@ -63,4 +63,4 @@ vendor/
 demo/*
 
 # 生产配置文件
-/etc/*product.yaml
+/etc/*
